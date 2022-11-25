@@ -2,7 +2,7 @@
 
 Practice Questions from LeetCode
 
-Basic Data Structure learning notes
+Data Structure learning notes
 
 Chapter-01
   - Linked List
