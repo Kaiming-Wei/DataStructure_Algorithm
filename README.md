@@ -4,16 +4,19 @@ Practice Questions from LeetCode
 
 Data Structure learning notes
 
-Chapter-01
+Basic Data Structure
   - Linked List
   - Stack
   - Queue
+  - Binay Tree
+  - Graph
  
-Chapter-02
-  - 6 basic sorting algorithm
+ 6 basic sorting algorithm
     - Insertion
     - Selection
     - Bubble
     - Merge
     - Quick
     - Heap (Heap Structure)
+ 
+ From Brute-Force to Dynamic Programming
