@@ -26,8 +26,6 @@ public class MaxValue_Bag {
       public static int dpways(int[] weight, int[] value, int bag){
         int N = weight.length;
         int[][] dp = new int[bag+1][N+1];
-        System.out.println(N);
-        System.out.println(dp[0].length);
         
         //init
         for(int i = 0; i < bag+1; i++){
