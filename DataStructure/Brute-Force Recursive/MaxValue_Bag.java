@@ -20,6 +20,34 @@ public class MaxValue_Bag {
         }
         return process(weight, value, bagsize, i+1, bag);
     }
+  
+  
+  // dp 
+      public static int dpways(int[] weight, int[] value, int bag){
+        int N = weight.length;
+        int[][] dp = new int[bag+1][N+1];
+        System.out.println(N);
+        System.out.println(dp[0].length);
+        
+        //init
+        for(int i = 0; i < bag+1; i++){
+            dp[i][N] = 0;
+        }
+        
+        for(int index = N-1; index >= 0; index--){
+            for(int rest = 0; rest <= bag; rest++){
+                if(weight[index] <= rest){
+                    int selected = value[index] + dp[ rest - weight[index] ][index+1]; //process(weight, value, rest - weight[index], index+1);
+                    int not_selected = dp[rest][index+1];//process(weight, value, rest - weight[index], index+1);
+                    dp[rest][index] =  Math.max(selected, not_selected);
+                }else{
+                    dp[rest][index] = dp[rest][index+1];
+                }
+            }
+        }
+        
+        return dp[bag][0];
+    }
     
     // test
     public static void main(String args[]) {
