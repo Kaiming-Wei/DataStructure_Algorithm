@@ -1,4 +1,4 @@
-public class PeimeNumber {
+public class PrimeNumber {
     // Giving an integer n
     // Find how many prime numbers are between 0~n
 
