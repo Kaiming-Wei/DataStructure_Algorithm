@@ -1,0 +1,46 @@
+class Solution {
+    public boolean predictTheWinner(int[] nums) {
+        int[][] first = new int[nums.length][nums.length];
+        int[][] second = new int[nums.length][nums.length];
+        dp(nums, first, second, 0, nums.length-1);
+        return first[0][nums.length-1] >= second[0][nums.length-1];
+        //return firstPick(nums, 0, nums.length-1) >= secondPick(nums, 0, nums.length-1);
+    }
+
+    // BF Recursive
+    public int firstPick(int[] nums, int L, int R){
+        if(L == R){
+            return nums[L];
+        }
+
+        return Math.max(nums[L] + secondPick(nums, L+1, R),
+                nums[R] + secondPick(nums, L, R-1));
+    }
+
+    public int secondPick(int[] nums, int L, int R){
+        if(L==R){
+            return 0;
+        }
+        return Math.min(firstPick(nums, L+1,R), firstPick(nums,L, R-1));
+    }
+
+
+    // convert to DP
+    public void dp(int[] nums, int[][] first, int[][] second, int L, int R){
+        for(int i = 0; i < nums.length; i++){
+            first[i][i] = nums[i];
+        }
+        for(int i = 1; i <= nums.length-1; i++){
+            int left = 0, right = i;
+            while(left < nums.length && right < nums.length){
+                first[left][right] = Math.max(nums[left] + second[left+1][right], 
+                                        nums[right]+second[left][right-1]);
+                second[left][right] = Math.min(first[left+1][right], first[left][right-1]);
+                left++;
+                right++;
+            }
+            
+        }
+    }
+
+}
