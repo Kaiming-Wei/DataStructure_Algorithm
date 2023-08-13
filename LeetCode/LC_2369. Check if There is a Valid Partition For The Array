@@ -1,0 +1,55 @@
+class Solution {
+    public boolean validPartition(int[] nums) {
+        boolean[] dp = new boolean[nums.length+1];
+        dpway(nums, dp, nums.length);
+        return dp[0];
+    }
+
+    // BF Recursive
+    private boolean process(int[] nums, int i, int len){
+        if(i == nums.length){
+            return true;
+        }
+        boolean ans = false;
+        if(i + 2 <= len-1){
+            if(nums[i] == nums[i+1]){
+                ans = ans || process(nums, i + 2, len);
+            }
+            if(nums[i] == nums[i+1] && nums[i] == nums[i+2]){
+                ans = ans || process(nums, i+3, len);
+            }else if(nums[i] + 1 == nums[i+1] && nums[i] + 2 == nums[i+2]){
+                ans = ans || process(nums,i+3, len);
+            }
+        }else if(i+1 == len-1){
+            if(nums[i] == nums[i+1]){
+                ans = ans || process(nums, i + 2, len);
+            }
+        }
+        return ans;
+    }
+
+    // convert to DP
+    private void dpway(int[] nums, boolean[] dp, int len){
+        dp[nums.length] = true;
+
+        for(int i = nums.length-1; i>=0; i--){
+            boolean ans = false;
+            if(i + 2 <= len-1){
+                if(nums[i] == nums[i+1]){
+                    ans = ans || dp[i+2];
+                }
+                if(nums[i] == nums[i+1] && nums[i] == nums[i+2]){
+                    ans = ans || dp[i+3];
+                }
+                if(nums[i] + 1 == nums[i+1] && nums[i] + 2 == nums[i+2]){
+                    ans = ans || dp[i+3];
+                }
+            }else if(i+1 == len-1){
+                if(nums[i] == nums[i+1]){
+                    ans = ans || dp[i+2];
+                }
+            }
+            dp[i] = ans;
+        }
+    }
+}
