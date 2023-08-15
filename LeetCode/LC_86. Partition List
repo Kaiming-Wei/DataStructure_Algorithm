@@ -1,0 +1,130 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode partition(ListNode head, int x) {
+        if(head == null || head.next == null){
+            return head;
+        }
+        return solution3(head, x);
+    }
+
+    // delete old node ans create new node solution
+    public ListNode remove(ListNode head, int x){
+        ListNode less = null, ans = null, curr = head, prev = null;
+        while(curr != null){
+            if(curr.val < x){
+                // copy
+                if(ans == null){
+                    ans = new ListNode(curr.val);
+                    less = ans;
+                }else{
+                    less.next = new ListNode(curr.val);
+                    less = less.next;
+                }
+                // delete
+                if(prev == null){
+                    head = curr.next;
+                    curr = head;
+                }else{
+                    prev.next = curr.next;
+                    curr = curr.next;
+                }
+
+            }else{
+                prev = curr;
+                curr = curr.next;
+            }
+        }
+
+        ListNode i = ans;
+        if(i != null){
+            while(i.next != null){
+                i = i.next;
+            }
+            i.next = head;
+        }else{
+            ans = head;
+        }
+        return ans;
+    }
+
+
+
+
+    // modify the list itself
+    public ListNode swap(ListNode head, int x){
+        ListNode lesstail = null, lesshead = null, morehead = null;
+        ListNode curr = head, prev = null;
+        
+        while(curr != null){
+            if(curr.val < x){
+                // first small val node, with no great val node before
+                if(lesshead == null && prev == null){
+                    lesshead = curr;
+                    lesstail = curr;
+                }else if(lesshead == null && prev != null){   // first small val node, with greater val node before
+                    lesshead = curr;
+                    lesstail = curr;
+                    prev.next = curr.next;
+                    curr = curr.next;
+                }else if(lesshead != null && prev != null){     // not the first small val node, with greater val node before
+                    lesstail.next = curr;
+                    lesstail = curr;
+                    prev.next = curr.next;
+                    curr = curr.next;
+                }else{                                      // not first small val node, without greater val node before
+                    lesstail = curr;
+                    curr = curr.next;
+                }
+            }else{
+                if(morehead == null){
+                    morehead = curr;
+                }
+                prev = curr;
+                curr = curr.next;
+            }
+        }
+        if(lesstail == null){
+            return morehead;
+        }else{
+            lesstail.next = morehead;
+            return lesshead;
+        }
+    }
+
+
+    public ListNode solution3(ListNode head, int x){
+        ListNode lesshead = new ListNode(0);
+        ListNode morehead = new ListNode(0);
+        ListNode lesstail = lesshead, moretail = morehead;
+        while(head != null){
+            if(head.val < x){
+                lesstail.next = head;
+                head = head.next;
+                lesstail = lesstail.next;
+                lesstail.next = null;
+            }else{
+                moretail.next = head;
+                head = head.next;
+                moretail = moretail.next;
+                moretail.next = null;
+            }
+        }
+        lesshead = lesshead.next;
+        morehead = morehead.next;
+        if(lesshead != null){
+            lesstail.next = morehead;
+            return lesshead;
+        }else{
+            return morehead;
+        }
+    }
+}
