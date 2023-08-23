@@ -1,0 +1,47 @@
+class Solution {
+    public String reorganizeString(String s) {
+        int n = s.length();
+        PriorityQueue<int[]> heap = new PriorityQueue<int[]>((a, b) -> (b[0] - a[0]));
+        char[] c = s.toCharArray();
+        int[] size = new int[27];
+        for(char ch : c){
+            size[ch - 96]++;
+        }
+        for(int i = 1; i <= size.length-1; i++){
+            if(size[i] != 0){
+                heap.add(new int[]{size[i],i});
+            }
+        }
+        if(n % 2 == 0 && heap.peek()[0] > n/2){
+            return "";
+        }
+        if(n % 2 == 1 && heap.peek()[0] > n/2+1){
+            return "";
+        }
+        String ans = "";
+        while(heap.size() > 0){
+            if(ans == "" || (char)(heap.peek()[1] + 96) != ans.charAt(ans.length()-1)){
+                int[] max = heap.poll();
+                max[0]--;
+                ans += (char)(max[1]+96);
+                if(max[0] != 0){
+                    heap.add(max);
+                }
+            }else{
+                int[] max = heap.poll();
+                int[] second = heap.poll();
+                second[0]--;
+                ans += (char)(second[1]+96);
+                heap.add(max);
+                if(second[0] != 0){
+                    heap.add(second);
+                }
+            }
+        }
+        //System.out.print(ans);
+
+        return ans;
+    }
+
+
+}
