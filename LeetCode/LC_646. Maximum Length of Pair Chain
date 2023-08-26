@@ -1,0 +1,33 @@
+class Solution {
+    public int findLongestChain(int[][] pairs) {
+        if(pairs.length == 0){
+            return 0;
+        }
+        int end = Integer.MIN_VALUE, ans = 0; // end -> prev ending num
+        for(int i = 0; i <= pairs.length-1; i++){
+            int index = -1, cur_MIN_end = Integer.MAX_VALUE;
+            for(int j = i; j <= pairs.length-1; j++){
+                // find a set that first num is greater than prev ending
+                // and smallest curr ending
+                if(pairs[j][0] > end && pairs[j][1] < cur_MIN_end){
+                    index = j;
+                    cur_MIN_end = pairs[j][1];
+                }
+            }
+            if(index == -1){
+                break;
+            }else{
+                ans++;
+                end = pairs[index][1];
+                swap(pairs, i, index);
+            }
+        }
+        return ans;
+    }
+
+    private void swap(int[][] pairs, int a, int b){
+        int[] tem = pairs[a];
+        pairs[a] = pairs[b];
+        pairs[b] = tem;
+    }
+}
