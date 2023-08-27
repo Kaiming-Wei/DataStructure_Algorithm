@@ -1,0 +1,97 @@
+class Solution {
+    public boolean canCross(int[] stones) {
+        if(Arrays.equals(stones, null)){
+            System.out.print("null");
+        }
+        if(stones[1] != 1){
+            return false;
+        }
+
+        //return process(stones, 1, 1);
+        boolean[][] dp = new boolean[stones.length][stones.length];
+        //System.out.print(dp[0][0]);
+        dpway(stones, dp);
+
+        return dp[1][1];
+    }
+
+    private boolean process(int[] stones, int jump, int i){
+        if(i == stones.length-1){
+            return true;
+        }
+        
+        // k - 1
+        int next = find(stones, i, stones[i] + jump - 1);
+        if( next != i ){
+            if(process(stones, jump-1, next)){
+                return true;
+            }
+        }
+        // k
+        next = find(stones, i, stones[i] + jump);
+        if( next != i ){
+            if(process(stones, jump, next)){
+                return true;
+            }
+        }
+        // k + 1
+        next = find(stones, i, stones[i] + jump + 1);
+        if( next != i ){
+            if(process(stones, jump+1, next)){
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+    private void dpway(int[] stones, boolean[][] dp){
+        Arrays.fill(dp[stones.length-1], true);
+        for(int i = stones.length-2; i >= 1; i--){
+            for(int jump = i+1; jump >= 1; jump--){
+                int next = find(stones, i, stones[i] + jump - 1);
+                if( next != i ){
+                    if(dp[next][jump-1]){
+                        dp[i][jump] = true;
+                        continue;
+                    }
+                }
+                // k
+                next = find(stones, i, stones[i] + jump);
+                if( next != i ){
+                    if(dp[next][jump]){
+                        dp[i][jump] = true;
+                        continue;
+                    }
+                }
+                // k + 1
+                next = find(stones, i, stones[i] + jump + 1);
+                if( next != i ){
+                    if(dp[next][jump+1]){
+                        dp[i][jump] = true;
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+
+    private int find(int[] stones, int i, int target){
+
+        int n = stones.length;
+        int L = i+1, R = n-1, M = 0;
+        while(L <= R){
+            M = L + ((R - L)/2);
+            if(stones[M] == target){
+                return M;
+            }
+            if(stones[M] < target){
+                L = M + 1;
+            }else{
+                R = M - 1;
+            }
+        }
+        return i;
+    }
+}
