@@ -1,0 +1,36 @@
+class Solution {
+    public int bestClosingTime(String customers) {
+        char[] c = customers.toCharArray();
+        int n = c.length;
+        int[] penalty = new int[n+1];
+
+        // check if store close at 0
+        // find it's penalty
+        for(char come : c){
+            if(come == 'Y'){
+                penalty[0]++;
+            }
+        }
+
+        // minium penalty and it's closing hour
+        int min_p = penalty[0];
+        int hour = 0;
+
+        // i means we close at i hour
+        for(int i = 1; i <= n; i++){
+            if(c[i-1] == 'Y'){ // if prev is 'Y', previous penalty - 1
+                penalty[i] = penalty[i-1] - 1;
+            }else{
+                penalty[i] = penalty[i-1] + 1;  //previous penalty + 1
+            }
+            if(penalty[i] < min_p){
+                min_p = penalty[i];
+                hour = i;
+            }
+        }
+        //System.out.print(hour);
+        return hour;
+    }
+
+    // 
+}
