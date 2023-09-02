@@ -1,0 +1,54 @@
+class Solution {
+    public int minExtraChar(String s, String[] dictionary) {
+        HashSet<String> set = new HashSet<String>();
+        char[] c_array = s.toCharArray();
+        for(String str : dictionary){
+            set.add(str);
+        }
+        
+        // recursive
+        // return process(s.toCharArray(), set, 0);
+
+
+        // dp
+        int[] dp = new int[c_array.length + 1];
+        dpway(c_array, set, dp);
+        return dp[0];
+    }
+
+    // recursive
+    private int process(char[] s, HashSet<String> set, int start){
+        if(start == s.length){
+            return 0;
+        }
+        int ans = s.length+1;
+        String str = "";
+        for(int i = start; i < s.length; i++){
+            str += s[i];
+            if(set.contains(str)){
+                ans = process(s, set, i+1);
+            }
+        }
+        ans = Math.min(1 + process(s, set, start+1) , ans);
+
+        return ans;
+    }
+
+    // dpway
+    private void dpway(char[] s, HashSet<String> set, int[] dp){
+        // init
+        dp[dp.length-1] = 0;
+
+        for(int start = dp.length-2; start >= 0; start--){
+            int ans = s.length+1;
+            String str = "";
+            for(int i = start; i < s.length; i++){
+                str += s[i];
+                if(set.contains(str)){
+                    ans = dp[i+1];
+                }
+            }
+            dp[start] = Math.min(1 + dp[start+1] , ans);
+        }
+    }
+}
