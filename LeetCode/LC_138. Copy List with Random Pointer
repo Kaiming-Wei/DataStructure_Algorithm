@@ -1,0 +1,85 @@
+/*
+// Definition for a Node.
+class Node {
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) {
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    }
+}
+*/
+
+class Solution {
+    public Node copyRandomList(Node head) {
+        if(head == null){
+            return null;
+        }
+        Node cur = head;
+        /*
+        while(cur.next != null){
+            cur = cur.next;
+            copy_cur.next = new Node(cur.val);
+            copy_cur = copy_cur.next;
+        }
+        cur = head;
+        copy_cur = copy_head;
+
+        while(cur != null){
+            if(cur.random == null){
+                cur = cur.next;
+                copy_cur = copy_cur.next;
+            }else{
+                Node tem = head, copy_tem = copy_head;
+                while(tem != cur.random){
+                    tem = tem.next;
+                    copy_tem = copy_tem.next;
+                }
+                copy_cur.random = copy_tem;
+                cur = cur.next;
+                copy_cur = copy_cur.next;
+            }
+        }
+        */
+
+        // creat new copy node next to the original
+        while(cur != null){
+            Node copy = new Node(cur.val);
+            Node next = cur.next;
+            cur.next = copy;
+            copy.next = next;
+            cur = next;
+        }
+
+        // connect the random pointer
+        // new node random = original.random.next
+        cur = head;
+        Node copy = head.next, copy_head = copy;
+        while(cur != null){
+            if(cur.random != null){
+                copy.random = cur.random.next;
+            }
+            cur = cur.next.next;
+            if(copy.next != null){
+                copy = copy.next.next;
+            }
+        }
+
+        // seprate original list and copied list
+        cur = head;
+        copy = copy_head;
+        while(cur != null){
+            cur.next = cur.next.next;
+            cur = cur.next;
+            if(copy.next != null){
+                copy.next = copy.next.next;
+                copy = copy.next;
+            }
+        }
+
+        return copy_head;
+    }
+}
