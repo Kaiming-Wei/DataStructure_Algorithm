@@ -1,0 +1,67 @@
+class Solution {
+    /*
+    public int candy(int[] ratings) {
+        if(ratings.length == 1){
+            return 1;
+        }
+        int[] candys = new int[ratings.length];
+        Arrays.fill(candys, 1);
+        int i = 0;
+        while(i < ratings.length){
+            if(i == 0){
+                if(ratings[i] > ratings[i+1] && candys[i] <= candys[i+1]){
+                    candys[i] += candys[i+1] - candys[i] + 1;
+                }
+            }else if(i == ratings.length - 1){
+                if(ratings[i] > ratings[i-1] && candys[i] <= candys[i-1]){
+                    candys[i] += candys[i-1] - candys[i] + 1;
+                }
+            }else{
+                if(ratings[i] > ratings[i-1] && candys[i] <= candys[i-1]){
+                    candys[i] += candys[i-1] - candys[i] + 1;
+                }
+                if(ratings[i] > ratings[i+1] && candys[i] <= candys[i+1]){
+                    candys[i] += candys[i+1] - candys[i] + 1;
+                    if(ratings[i] < ratings[i-1] && candys[i] >= candys[i-1]){
+                        i--;
+                        continue;
+                    }
+                }
+            }
+            i++;
+        }
+        int sum = 0;
+        for(int a : candys){
+            System.out.print(a+ " ");
+            sum += a;
+        }
+        return sum;
+    }
+    */
+
+
+
+    public int candy(int[] ratings) {
+        if(ratings.length == 1){
+            return 1;
+        }
+        int[] candys = new int[ratings.length];
+        Arrays.fill(candys, 1);
+        for(int i = 1; i < ratings.length; i++){
+            if(ratings[i] > ratings[i-1]){
+                candys[i] = candys[i-1]+1;
+            }
+        }
+        for(int i = ratings.length-2; i >= 0; i--){
+            if(ratings[i] > ratings[i+1] && candys[i] <= candys[i+1]){
+                candys[i] = candys[i+1]+1;
+            }
+        }
+        int sum = 0;
+        for(int a : candys){
+            //System.out.print(a+ " ");
+            sum += a;
+        }
+        return sum;
+    }
+}
