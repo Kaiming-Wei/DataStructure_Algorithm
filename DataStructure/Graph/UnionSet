@@ -34,13 +34,13 @@ private class UnionSet{
             return cur;
 
         }
+        // check 2 nodes is in the same set
         public boolean isSameSet(int a, int b){
             Node A = nodes.get(a);
             Node B = nodes.get(b);
             return findFather(A) == findFather(B);
         }
-
-        // union 2 nodes by their ID
+        // union 2 nodes
         public void union(int a, int b){
             Node A = nodes.get(a);
             Node B = nodes.get(b);
