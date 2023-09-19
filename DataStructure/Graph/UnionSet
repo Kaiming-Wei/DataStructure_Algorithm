@@ -1,0 +1,61 @@
+private class UnionSet{
+        private class Node{
+            int[] value;
+            public Node(int[] p){
+                value = p;
+            }
+        }
+        private HashMap<Integer, Node> nodes;
+        private HashMap<Node, Node> parents;
+        private HashMap<Node, Integer> size;
+        public UnionSet(int[][] points){
+            nodes = new HashMap<>();
+            parents = new HashMap<>();
+            size = new HashMap<>();
+            for(int i = 0; i < points.length; i++){
+                Node n = new Node(points[i]);
+                nodes.put(i, n);
+                parents.put(n, n);
+                size.put(n, 1);
+            }
+        }
+
+        private Node findFather(Node n){
+            Node cur = n;
+            Queue<Node> q = new LinkedList<>();
+            while(parents.get(cur) != cur){
+                q.add(cur);
+                cur = parents.get(cur);
+            }
+            while(!q.isEmpty()){
+                Node node = q.poll();
+                parents.put(node, cur);
+            }
+            return cur;
+
+        }
+        public boolean isSameSet(int a, int b){
+            Node A = nodes.get(a);
+            Node B = nodes.get(b);
+            return findFather(A) == findFather(B);
+        }
+
+        // union 2 nodes by their ID
+        public void union(int a, int b){
+            Node A = nodes.get(a);
+            Node B = nodes.get(b);
+            Node aHead = findFather(A);
+            Node bHead = findFather(B);
+            int aSize = size.get(aHead);
+            int bSize = size.get(bHead);
+            if(aSize <= bSize){
+                parents.put(aHead, bHead);
+                size.put(bHead, aSize + bSize);
+                size.remove(aHead);
+            }else{
+                parents.put(bHead, aHead);
+                size.put(aHead, aSize + bSize);
+                size.remove(bHead);
+            }
+        }
+    }
