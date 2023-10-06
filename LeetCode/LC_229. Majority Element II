@@ -1,0 +1,55 @@
+class Solution {
+    public List<Integer> majorityElement(int[] nums) {
+        int len = nums.length;
+        List<Integer> res = new ArrayList<>();
+        if(len <= 2){
+            for(int i : nums){
+                if(!res.contains(i)){
+                    res.add(i);
+                }
+            }
+            return res;
+        }
+        process(nums, 0, len-1, res);
+        return res;
+    }
+
+    private void process(int[] nums, int L, int R, List<Integer> res){
+        if(L >= R){
+            return;
+        }
+        int target = nums[R];
+        int less = L, more = R;
+        int i = L;
+        while(i <= more){
+            if(nums[i] < target){
+                swap(nums, i, less);
+                less++;
+                i++;
+            }else if(nums[i] == target){
+                i++;
+            }else{
+                swap(nums, more, i);
+                more--;
+            }
+        }
+        int size = nums.length / 3;
+        if(more - less + 1 > size){
+            res.add(nums[more]);
+        }
+        if(less - L > size){
+            process(nums, L, less-1, res);
+        }
+        if(R - more > size){
+            process(nums, more + 1, R, res);
+        }
+    }
+    private void swap(int[] nums, int a, int b){
+        if(a == b){
+            return;
+        }
+        int tem = nums[a];
+        nums[a] = nums[b];
+        nums[b] = tem;
+    }
+}
