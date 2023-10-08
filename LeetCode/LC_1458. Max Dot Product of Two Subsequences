@@ -1,0 +1,73 @@
+class Solution {
+    public int maxDotProduct(int[] nums1, int[] nums2) {
+        int max1 = nums1[0], max2 = nums2[0];
+        int[][] dp = new int[nums1.length + 1][nums2.length + 1];
+        // find max in nums1 and nums2
+        for(int i : nums1){
+            max1 = Math.max(max1, i);
+        }
+        for(int i : nums2){
+            max2 = Math.max(max2, i);
+        }
+
+        // if one of the max is < 0, that means the result will be negative
+        // which is largest negative number and smallest positive number
+        if(max1 < 0){
+            for(int i : nums2){
+                max2 = Math.min(max2, i);
+            }
+            return max1 * max2;
+        }
+        if(max2 < 0){
+            for(int i : nums1){
+                max1 = Math.min(max1, i);
+            }
+            return max1 * max2;
+        }
+
+
+        // otherwise find solution
+        dpway(nums1, nums2, dp);
+        int res = dp[0][0];
+        return res;
+    }
+
+
+    // dynammic way converted from recusive
+    private void dpway(int[] nums1, int[] nums2, int[][] dp){
+        for(int i = nums1.length - 1; i >= 0; i--){
+            for(int j = nums2.length - 1; j >= 0; j--){
+                int try1 = nums1[i] * nums2[j] + dp[i+1][j+1]; //process(nums1, nums2, i+1, j+1);
+                int try2 = dp[i][j+1]; //process(nums1, nums2, i, j+1);
+                int try3 = dp[i+1][j]; //process(nums1, nums2, i+1, j);
+                int try4 = dp[i+1][j+1]; //process(nums1, nums2, i+1, j+1);
+                dp[i][j] = max(try1, try2, try3, try4);
+            }
+        }
+    }
+
+
+    // recursive solution, i is the nums1 pointer, j is nums2 pointer
+    private int process(int[] nums1, int[] nums2, int i, int j){
+        if(i == nums1.length || j == nums2.length){
+            return 0;
+        }
+        // 4 different situations
+        int try1 = nums1[i] * nums2[j] + process(nums1, nums2, i+1, j+1);
+        int try2 = process(nums1, nums2, i, j+1);
+        int try3 = process(nums1, nums2, i+1, j);
+        int try4 = process(nums1, nums2, i+1, j+1);
+
+        // return the max soluiton between 4 different situation
+        return max(try1, try2, try3, try4);
+    }
+
+
+
+    // healper function, find max of 4 int
+    private int max(int a, int b, int c, int d){
+        int max = Math.max(a, b);
+        max = Math.max(max, c);
+        return Math.max(max, d);
+    }
+}
