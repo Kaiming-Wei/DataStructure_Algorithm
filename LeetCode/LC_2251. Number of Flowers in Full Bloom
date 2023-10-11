@@ -1,0 +1,47 @@
+class Solution {
+    public int[] fullBloomFlowers(int[][] flowers, int[] people) {
+        int[] res = new int[people.length];
+        int[] bloom = new int[flowers.length];
+        int[] close = new int[flowers.length];
+        for(int i = 0; i < flowers.length; i++){
+            bloom[i] = flowers[i][0];
+            close[i] = flowers[i][1];
+        }
+        Arrays.sort(bloom);
+        Arrays.sort(close);
+        for(int i = 0; i < people.length; i++){
+            int b = blooming(bloom, people[i]) + 1;
+            int c = closing(close, people[i] - 1) + 1;
+            res[i] = b - c;
+        }
+        return res;
+    }
+    private int blooming(int[] bloom,int time){
+        int L = 0, R = bloom.length-1;
+        int res = -1, M = L;
+        while(L <= R){
+            M = L + ((R-L) >> 1);
+            if(bloom[M] <= time){
+                res = M;
+                L = M + 1;
+            }else{
+                R = M - 1;
+            }
+        }
+        return res;
+    }
+    private int closing(int[] close, int time){
+        int L = 0, R = close.length-1;
+        int res = -1, M = L;
+        while(L <= R){
+            M = L + ((R-L) >> 1);
+            if(close[M] <= time){
+                res = M;
+                L = M + 1;
+            }else{
+                R = M - 1;
+            }
+        }
+        return res;
+    }
+}
