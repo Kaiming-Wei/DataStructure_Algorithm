@@ -1,0 +1,57 @@
+class Solution {
+
+    public int paintWalls(int[] cost, int[] time) {
+        //return process(cost, time, cost.length, 0);
+        int n = cost.length;
+        int[][] dp = new int[n + 1][n + 1];
+        dpway(cost, time, dp);
+        return dp[n][0];
+    }
+
+    private int process(int[] cost, int[] time, int n, int i){
+        if(n <= 0){
+            return 0;
+        }
+        if(i == cost.length){
+            return Integer.MAX_VALUE;
+        }
+        int rest = process(cost, time, n - (time[i] + 1), i+1);
+        int painted = 0;
+        if(rest == Integer.MAX_VALUE){
+            painted = rest;
+        }else{
+            painted = cost[i] + rest;
+        }
+        int not = process(cost, time, n, i+1);
+        return Math.min(painted, not);
+    }
+
+    private void dpway(int[] cost, int[] time, int[][] dp){
+        // n : small -> large
+        // i : large -> small
+
+        // init
+        Arrays.fill(dp[0], 0); // not necessary
+        for(int n = 1; n <= cost.length; n++){
+            dp[n][cost.length] = Integer.MAX_VALUE;
+        }
+
+        for(int n = 0; n <= cost.length; n++){
+            for(int i = cost.length - 1; i >= 0; i--){
+                int wall = n - (time[i] + 1);
+                if(wall < 0){
+                    wall = 0;
+                }
+                int rest = dp[wall][i+1]; //process(cost, time, n - (time[i] + 1), i+1);
+                int painted = 0;
+                if(rest == Integer.MAX_VALUE){
+                    painted = rest;
+                }else{
+                    painted = cost[i] + rest;
+                }
+                int not = dp[n][i+1]; //process(cost, time, n, i+1);
+                dp[n][i] = Math.min(painted, not);
+            }
+        }
+    }
+}
