@@ -1,0 +1,69 @@
+class Solution {
+    public int numWays(int steps, int arrLen) {
+        // brute recrusive
+        // return process(arrLen, 0, steps);
+
+
+        // dynnamic programming
+        if(arrLen == 1){
+            return 1;
+        }
+
+        // if steps < arrLen, there's no need calculate entire array
+        int index = arrLen <= steps ? arrLen : steps+1;
+        int[][] dp = new int[index][steps + 1];
+        int mod = 1000000000 + 7;
+        dpway(arrLen, steps, dp, mod);
+        return dp[0][steps];
+    }
+
+    // recursive
+    private int process(int len, int i, int steps){
+        if(steps == 0 && i == 0){
+            return 1;
+        }else if(steps == 0){
+            return 0;
+        }
+        int left = 0, stay = 0, right = 0;
+        if(i == 0){
+            right = process(len, i + 1, steps - 1);
+            stay = process(len, i, steps - 1);
+        }else if(i == len-1){
+            left = process(len, i - 1, steps - 1);
+            stay = process(len, i, steps - 1);
+        }else{
+            left = process(len, i - 1, steps - 1);
+            stay = process(len, i, steps - 1);
+            right = process(len, i + 1, steps - 1);
+        }
+        return left + stay + right;
+    }
+
+
+    private void dpway(int len, int steps, int[][] dp, int mod){
+        // init
+        dp[0][0] = 1;
+
+        // step : small -> large   top -> bottom
+        // i : small -> large       left -> right
+        for(int step = 1; step <= dp[0].length-1; step++){
+            for(int i = 0; i <= dp.length - 1; i++){
+                int left = 0, stay = 0, right = 0;
+                if(i == 0){
+                    right = dp[i + 1][step-1]; // process(len, i + 1, steps - 1);
+                    stay = dp[i][step-1]; //process(len, i, steps - 1);
+                }
+                else if(i == dp.length-1){
+                    left = dp[i - 1][step-1]; //process(len, i - 1, steps - 1);
+                    stay = dp[i][step-1]; //process(len, i, steps - 1);
+                }
+                else{
+                    left = dp[i - 1][step-1]; //process(len, i - 1, steps - 1);
+                    stay = dp[i][step-1]; //process(len, i, steps - 1);
+                    right = dp[i + 1][step-1]; // process(len, i + 1, steps - 1);
+                }
+                dp[i][step] = ((((left%mod) + (stay%mod))%mod) + (right%mod))%mod;
+            }
+        }
+    }
+}
