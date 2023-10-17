@@ -1,0 +1,60 @@
+class Solution {
+    public boolean validateBinaryTreeNodes(int n, int[] leftChild, int[] rightChild) {
+        /* first :
+            check numbers of parents for each node
+            there is only one node with 0 in, which is root
+        */
+        int[] in = new int[n];
+        for(int c : leftChild){
+            if(c != -1){
+                in[c]++;
+            }
+        }
+        for(int c : rightChild){
+            if(c != -1){
+                in[c]++;
+            }
+        }
+
+        // if exist a node with more than 2 in or exist 2 root, return false
+        // else find root node
+        int root = -1;
+        for(int i = 0; i < n; i++){
+            if(in[i]== 0){
+                if(root == -1){
+                    root = i;
+                }else{
+                    return false;
+                }
+            }
+            if(in[i] >= 2){
+                return false;
+            }
+        }
+        if(root == -1){
+            return false;
+        }
+
+        // pre-order traval, make sure every node in the tree is visited
+        Stack<Integer> stack = new Stack<>();
+        int[] visited = new int[n];
+        stack.push(root);
+        while(!stack.isEmpty()){
+            int cur = stack.pop();
+            visited[cur] = 1;
+            if(rightChild[cur] != -1){
+                stack.push(rightChild[cur]);
+            }
+            if(leftChild[cur] != -1){
+                stack.push(leftChild[cur]);
+            }
+        }
+        // if a node is not visited, return false
+        for(int i : visited){
+            if(i == 0){
+                return false;
+            }
+        }
+        return true;
+    }
+}
