@@ -1,0 +1,75 @@
+class Solution {
+    private class Course{
+        /*
+            key : course key
+            pre : how many prerequisite couses
+            time : time need to complete this couse
+            end(init after we start this course) : the time when finish this course, used in the heap
+
+            next : all the courses that use this course as pre
+        */
+        public int key, pre, time, end;
+        public List<Course> next;
+
+        public Course(int key, int time){
+            this.key = key;
+            this.time = time;
+            end = time;
+            pre = 0;
+            next = new ArrayList<>();
+        }
+    }
+    public int minimumTime(int n, int[][] relations, int[] time) {
+        List<Course> courses = new ArrayList<>();
+        // init all the couses
+        for(int i = 1; i <= n; i++){
+            Course c = new Course(i, time[i-1]);
+            courses.add(c);
+        }
+        // init all the prerequisite relation
+        for(int[] set : relations){
+            Course from = courses.get(set[0]-1);
+            Course to = courses.get(set[1]-1);
+            from.next.add(to);
+            to.pre++;
+        }
+
+        // heap, end time first
+        PriorityQueue<Course> taking = new PriorityQueue<>(new CourseComparator());
+        // when pre is 0, means no prerequisite courses needed
+        // add it to the heap, and init it's end time
+        for(Course c : courses){
+            if(c.pre == 0){
+                // c.end = c.time;
+                taking.add(c);
+            }
+        }
+        int curTime = 0;
+
+        while(!taking.isEmpty()){
+            // poll first completed course
+            Course curTaking = taking.poll();
+            curTime = curTaking.end;
+            /*
+                for all it's next courses
+                reduce pre by 1 and if pre become 0,
+                init it's end time and add it to the heap
+            */
+            for(Course nextCourse : curTaking.next){
+                nextCourse.pre--;
+                if(nextCourse.pre == 0){
+                    nextCourse.end = curTime + nextCourse.time;
+                    taking.add(nextCourse);
+                }
+            }
+
+        }
+
+        return curTime;
+    }
+    private class CourseComparator implements Comparator<Course>{
+        public int compare(Course c1, Course c2){
+            return c1.end - c2.end;
+        }
+    }
+}
