@@ -1,0 +1,28 @@
+class Solution {
+    public int maximumScore(int[] nums, int k) {
+        // left pointer, right pointer
+        int l = k - 1, r = k + 1;
+        int max = nums[k], curmax = nums[k], min = k;
+        while(l >= 0 || r < nums.length){
+            // base on cur minium, find max
+            while(l >= 0 && nums[l] >= nums[min]){
+                l--;
+            }
+            while(r < nums.length && nums[r] >= nums[min]){
+                r++;
+            }
+            curmax = (r - l - 1) * nums[min];
+            max = Math.max(curmax, max);
+
+            // update the min to the greater value
+            if(l >= 0 && r < nums.length){
+                min = nums[l] <= nums[r] ? r : l;
+            }else if(l >= 0){
+                min = l;
+            }else{
+                min = r;
+            }
+        }
+        return max;
+    }
+}
