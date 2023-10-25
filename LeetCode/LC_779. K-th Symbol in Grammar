@@ -1,0 +1,28 @@
+class Solution {
+    public int kthGrammar(int n, int k) {
+        int[] position = new int[n];
+        int cur = findPrev(n-1, k-1, position);
+        for(int i = 2; i < position.length; i++){
+            if((cur == 0 && position[i] == 0) || (cur == 1 && position[i] == 1)){
+                cur = 0;
+            }else{
+                cur = 1;
+            }
+        }
+        return cur;
+    }
+    private int findPrev(int row, int k, int[] position){
+        if(k == 0){
+            return 0;
+        }
+        if(row == 1){
+            if(k == 0){
+                return 0;
+            }else{
+                return 1;
+            }
+        }
+        position[row] = k % 2;
+        return findPrev(row-1, k/2, position);
+    }
+}
