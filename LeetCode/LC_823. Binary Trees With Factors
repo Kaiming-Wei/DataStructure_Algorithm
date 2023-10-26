@@ -1,0 +1,34 @@
+class Solution {
+    public int numFactoredBinaryTrees(int[] arr) {
+        final int mod = 1000000007;
+        Arrays.sort(arr);
+        long[] count = new long[arr.length];
+        count[0] = 1;
+        for(int i = 1; i < arr.length; i++){
+            int left = 0, right = i-1;
+            long cur = 1;
+            while(left <= right){
+                long product = (long)arr[left] * (long)arr[right];
+                if(product == arr[i]){
+                    long find = (count[left] * count[right]);
+                    if(left != right){
+                        find = (find * 2) ;
+                    }
+                    cur = (cur + find) % mod;
+                    left++;
+                    right--;
+                }else if(product < arr[i]){
+                    left++;
+                }else{
+                    right--;
+                }
+            }
+            count[i] = (cur) % mod;
+        }
+        long total = 0;
+        for(long i : count){
+            total = (total + i) % mod;
+        }
+        return (int)total;
+    }
+}
