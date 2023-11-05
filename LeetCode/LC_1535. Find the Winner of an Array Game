@@ -1,0 +1,19 @@
+class Solution {
+    public int getWinner(int[] arr, int k) {
+        int win = arr[0], round = 0;
+        for(int i = 1; i < arr.length; i++){
+            if(win > arr[i]){
+                // winner win
+                round++;
+            }else{
+                // new winner
+                win = arr[i];
+                round = 1;
+            }
+            if(round == k){
+                return win;
+            }
+        }
+        return win;
+    }
+}
