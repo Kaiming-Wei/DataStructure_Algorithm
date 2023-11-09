@@ -1,0 +1,24 @@
+class Solution {
+    public int countHomogenous(String s) {
+        int MOD = 1000000007;
+        char[] ch = s.toCharArray();
+        int start = 0, res = 0;
+        for(int i = 1; i < ch.length; i++){
+            if(ch[i] != ch[i-1]){
+                res = (res + count(i-start)) % MOD;
+                start = i;
+            }
+        }
+        res = (res + count(ch.length-start)) % MOD;
+        return res;
+    }
+    private int count(int n){
+        int MOD = 1000000007;
+        int res = 0;
+        while(n > 0){
+            res = (res + n) % MOD;
+            n--;
+        }
+        return res;
+    }
+}
