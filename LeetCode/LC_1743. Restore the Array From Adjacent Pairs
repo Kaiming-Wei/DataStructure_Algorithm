@@ -1,0 +1,96 @@
+class Solution {
+    private class Node{
+        public int key;
+        public Node left, right;
+        public Node(int key){
+            this.key = key;
+            left = null;
+            right = null;
+        }
+    }
+    public int[] restoreArray(int[][] adjacentPairs) {
+        /*
+            There will be 2 nums that will appear only once, first and last num in the array
+        */
+        HashMap<Integer, Node> map = new HashMap<>();
+        // HashMap<Integer, Integer> findFirst = new HashMap<>();
+        for(int[] pair : adjacentPairs){
+            // Initiallize each node
+            Node node1 = map.getOrDefault(pair[0], new Node(pair[0]));
+            Node node2 = map.getOrDefault(pair[1], new Node(pair[1]));
+            if(node1.left == null){
+                node1.left = node2;
+            }else{
+                node1.right = node2;
+            }
+            if(node2.left == null){
+                node2.left = node1;
+            }else{
+                node2.right = node1;
+            }
+            map.put(pair[0], node1);
+            map.put(pair[1], node2);
+
+
+            // count occurence using map
+            /*
+            int occ = findFirst.getOrDefault(pair[0], 0) + 1;
+            findFirst.put(pair[0], occ);
+            occ = findFirst.getOrDefault(pair[1], 0) + 1;
+            findFirst.put(pair[1], occ);
+            */
+        }
+        int n = adjacentPairs.length + 1;
+        int[] res = new int[n];
+        int first = findFirst(adjacentPairs);
+        /*
+        for(Map.Entry<Integer, Integer> set : findFirst.entrySet()){
+            // if a number is only occ once, it's the first number
+            if(set.getValue() == 1){
+                first = set.getKey();
+                break;
+            }
+        }
+        */
+        Node cur = map.get(first);
+        for(int i = 0; i < n; i++){
+            res[i] = cur.key;
+            int next = 0;
+            if(cur.left == null){
+                next = cur.right.key;
+            }else if(cur.right == null){
+                next = cur.left.key;
+            }else if(cur.left.key == res[i - 1]){
+                next = cur.right.key;
+            }else{
+                next = cur.left.key;
+            }
+            cur = map.get(next);
+
+        }
+        return res;
+        
+    }
+
+    private int findFirst(int[][] pairs){
+        int twoNum = 0;
+        for(int[] pair : pairs){
+            twoNum ^= pair[0];
+            twoNum ^= pair[1];
+        }
+        int mostRightOne = twoNum & ((~twoNum) + 1);
+        int a = 0, b = 0;
+        // two cases: same position bit == 0 (!= 1) and ==1
+        for(int[] pair : pairs){
+            if((pair[0] & mostRightOne) == 0){
+                a ^= pair[0];
+            }
+            if((pair[1] & mostRightOne) == 0){
+                a ^= pair[1];
+            }
+        }
+        b = twoNum ^ a;
+        
+        return a;
+    }
+}
