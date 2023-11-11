@@ -1,0 +1,205 @@
+class Graph {
+    private class Node{
+        public int key;
+        List<Edge> edge;
+        public Node(int key){
+            this.key = key;
+            edge = new ArrayList<>();
+        }
+    }
+    private class Edge{
+        public int weight;
+        public Node from, to;
+        public Edge(Node from, Node to, int weight){
+            this.weight = weight;
+            this.from = from;
+            this.to = to;
+        }
+    }
+    HashMap<Integer, Node> nodeMap;
+    public Graph(int n, int[][] edges) {
+        nodeMap = new HashMap<>();
+        //edgeSet = new HashSet<>();
+        for(int i = 0; i < n; i++){
+            nodeMap.put(i, new Node(i));
+        }
+        for(int[] edge : edges){
+            addEdge(edge);
+        }
+    }
+    
+    public void addEdge(int[] edge) {
+        Node from = nodeMap.get(edge[0]);
+        Node to = nodeMap.get(edge[1]);
+        Edge e = new Edge(from, to, edge[2]);
+        from.edge.add(e);
+    }
+    
+    /*
+    This method is using hashmap, and find minDistance
+    Time Complecity = O(N);
+
+    public int shortestPath(int node1, int node2) {
+        if(node1 == node2){
+            return 0;
+        }
+        Node from = nodeMap.get(node1);
+        Node target = nodeMap.get(node2);
+        HashMap<Node, Integer> distanceMap = new HashMap<>();
+        HashSet<Node> lock = new HashSet<>();
+        distanceMap.put(from, 0);
+        Node cur = find_MinDistance_And_Unlock_Node(distanceMap, lock);
+        while(cur != null){
+            int distance = distanceMap.get(cur);
+            for(Edge e : cur.edge){
+                Node to = e.to;
+                if(!distanceMap.containsKey(to)){
+                    distanceMap.put(to, distance + e.weight);
+                }else{
+                    distanceMap.put(to, Math.min(distance + e.weight , distanceMap.get(to)));
+                }
+            }
+            lock.add(cur);
+            cur = find_MinDistance_And_Unlock_Node(distanceMap, lock);
+            if(cur == target){
+                return distanceMap.get(cur);
+            }
+        }
+        return -1;
+    }
+
+    private Node find_MinDistance_And_Unlock_Node(HashMap<Node, Integer> distanceMap, HashSet<Node> lock){
+        int minDistance = Integer.MAX_VALUE;
+        Node res = null;
+        for(Map.Entry<Node, Integer> set : distanceMap.entrySet()){
+            if(!lock.contains(set.getKey())){
+                if(set.getValue() <= minDistance){
+                    minDistance = set.getValue();
+                    res = set.getKey();
+                }
+            }
+        }
+        return res;
+    }
+    */
+
+    // Method 2, using Modify Heap Structure;
+    private class Record{
+        public int distance;
+        public Node node;
+        public Record(int distance, Node node){
+            this.distance = distance;
+            this.node = node;
+        }
+    }
+    private class Heap{
+        private Node[] arr;
+        private HashMap<Node, Integer> positionMap;
+        private HashMap<Node, Integer> distanceMap;
+        private HashSet<Node> lock;
+        private int size;
+        public Heap(){
+            arr = new Node[nodeMap.size()];
+            positionMap = new HashMap<>();
+            distanceMap = new HashMap<>();
+            lock = new HashSet<>();
+            size = 0;
+        }
+        public boolean isEmpty(){
+            return size == 0;
+        }
+        public void addOrUpdateOrIgnore(Node node, int distance){
+            if(lock.contains(node)){
+                return;
+            }
+            if(!positionMap.containsKey(node)){
+                arr[size] = node;
+                distanceMap.put(node, distance);
+                positionMap.put(node, size);
+                insert(size);
+                size++;
+            }else{
+                distanceMap.put(node, Math.min( distanceMap.get(node), distance ));
+                int index = positionMap.get(node);
+                insert(index);
+            }
+        }
+        public Record pop(){
+            Record record = new Record(distanceMap.get(arr[0]), arr[0]);
+            lock.add(arr[0]);
+            distanceMap.remove(arr[0]);
+            positionMap.remove(arr[0]);
+            arr[0] = arr[size - 1];
+            size--;
+            Heapify(0);
+            return record;
+        }
+
+        private void swap(int a, int b){
+            Node n1 = arr[a], n2 = arr[b];
+            positionMap.put(n1, b);
+            positionMap.put(n2, a);
+            arr[a] = n2;
+            arr[b] = n1;
+        }
+        private void insert(int cur){
+            while(cur > 0){
+                int parent = (cur - 1) / 2;
+                if(distanceMap.get(arr[cur]) < distanceMap.get(arr[parent])){
+                    swap(cur, parent);
+                    cur = parent;
+                }else{
+                    break;
+                }
+            }
+        }
+        private void Heapify(int cur){
+            int leftChild = cur * 2 + 1;
+            while(leftChild <= size){
+                int rightChild = leftChild + 1;
+                int smallest = leftChild;
+                if(rightChild <= size){
+                    smallest = distanceMap.get(arr[leftChild]) <= distanceMap.get(arr[rightChild]) ? leftChild : rightChild;
+                }
+                smallest = distanceMap.get(arr[cur]) <= distanceMap.get(arr[smallest]) ? cur : smallest;
+                if(smallest == cur){
+                    break;
+                }else{
+                    swap(cur, smallest);
+                    cur = smallest;
+                    leftChild = cur * 2 + 1;
+                }
+
+            }
+
+        }
+    }
+    public int shortestPath(int node1, int node2){
+        if(node1 == node2){
+            return 0;
+        }
+        Node from = nodeMap.get(node1);
+        Node target = nodeMap.get(node2);
+        Heap heap = new Heap();
+        heap.addOrUpdateOrIgnore(from, 0);
+        while(!heap.isEmpty()){
+            Record record = heap.pop();
+            int distance = record.distance;
+            Node cur = record.node;
+            if(cur == target){
+                return distance;
+            }
+            for(Edge e : cur.edge){
+                heap.addOrUpdateOrIgnore(e.to, distance + e.weight);
+            }
+        }
+        return -1;
+    }
+}
+
+/**
+ * Your Graph object will be instantiated and called as such:
+ * Graph obj = new Graph(n, edges);
+ * obj.addEdge(edge);
+ * int param_2 = obj.shortestPath(node1,node2);
+ */
