@@ -1,0 +1,58 @@
+class Solution {
+    private class Stop{
+        int key;
+        List<Bus> buses;
+        int minBus;
+        public Stop(int key){
+            this.key = key;
+            buses = new ArrayList<>();
+            minBus = 0;
+        }
+    }
+    private class Bus{
+        List<Stop> stops;
+        public Bus(){
+            stops = new ArrayList<>();
+        }
+    }
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        if(source == target){
+            return 0;
+        }
+        HashMap<Integer, Stop> stopMap = new HashMap<>();
+        for(int[] bus : routes){
+            Bus newBus = new Bus();
+            for(int stopKey : bus){
+                Stop newStop = stopMap.getOrDefault(stopKey, new Stop(stopKey));
+                newStop.buses.add(newBus);
+                newBus.stops.add(newStop);
+                stopMap.put(stopKey, newStop);
+            }
+        }
+        Queue<Stop> queue = new LinkedList<>();
+        HashSet<Stop> stopLock = new HashSet<>();
+        HashSet<Bus> busLock = new HashSet<>();
+        queue.add(stopMap.get(source));
+        stopLock.add(stopMap.get(source));
+        while(!queue.isEmpty()){
+            Stop cur = queue.poll();
+            for(Bus bus : cur.buses){
+                if(busLock.contains(bus)){
+                    continue;
+                }
+                for(Stop stop : bus.stops){
+                    if(stop.key == target){
+                        return cur.minBus + 1;
+                    }
+                    if(!stopLock.contains(stop)){
+                        stop.minBus = cur.minBus + 1;
+                        queue.add(stop);
+                        stopLock.add(stop);
+                    }
+                }
+                busLock.add(bus);
+            }
+        }
+        return -1;
+    }
+}
