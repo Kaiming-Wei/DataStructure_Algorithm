@@ -9,7 +9,7 @@ Basic Data Structure
   - Stack
   - Queue
   - Binay Tree
-        - pre-order / in-order / post-order Travasal
+        . pre-order / in-order / post-order Travasal
   - Graph
         - Union Set (Min Spanning Tree)
         - BFS / DFS
