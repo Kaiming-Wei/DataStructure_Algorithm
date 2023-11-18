@@ -1,0 +1,19 @@
+class Solution {
+    public int maxFrequency(int[] nums, int k) {
+        Arrays.sort(nums);
+        int most = 1;
+        int left = 0;
+        int curVal = nums[left];
+        for(int i = 1; i < nums.length; i++){
+            int total = (i - left) * nums[i];
+            while(total - curVal > k && left < i){
+                total -= nums[i];
+                curVal -= nums[left++];
+            }
+            curVal += nums[i];
+            most = Math.max(i - left + 1, most);
+        }
+        
+        return most;
+    }
+}
