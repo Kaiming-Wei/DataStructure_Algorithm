@@ -9,7 +9,12 @@ Basic Data Structure
   - Stack
   - Queue
   - Binay Tree
+        - pre-order / in-order / post-order Travasal
   - Graph
+        - Union Set (Min Spanning Tree)
+        - BFS / DFS
+        - Topological Sort
+        - Dijkstra (Shortest Path)
  
  6 basic sorting algorithm
     - Insertion
