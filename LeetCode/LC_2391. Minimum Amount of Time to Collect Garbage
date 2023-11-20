@@ -1,0 +1,40 @@
+class Solution {
+    public int garbageCollection(String[] garbage, int[] travel) {
+        int n = garbage.length;
+        int P = 0, M = 0, G = 0;
+        int total = 0;
+        for(int i = n-1; i >= 0; i--){
+            for(char C : garbage[i].toCharArray()){
+                if(C == 'P' && P == 0){
+                    P = i;
+                }
+                if(C == 'M' && M == 0){
+                    M = i;
+                }
+                if(C == 'G' && G == 0){
+                    G = i;
+                }
+            }
+            if(P != 0 && M != 0 && G != 0){
+                break;
+            }
+        }
+        for(String str : garbage){
+            total += str.length();
+        }
+        for(int i = 1; i < travel.length; i++){
+            travel[i] += travel[i-1];
+        }
+        if(P != 0){
+            total += travel[P - 1];
+        }
+        if(M != 0){
+            total += travel[M - 1];
+        }
+        if(G != 0){
+            total += travel[G - 1];
+        }
+        return total;
+    }
+
+}
