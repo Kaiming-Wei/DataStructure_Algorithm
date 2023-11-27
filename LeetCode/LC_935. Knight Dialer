@@ -1,0 +1,59 @@
+class Solution {
+    private int MOD = 1000000007;
+    public int knightDialer(int n) {
+        int[] num = new int[]{2,2,2,2,3,0,3,2,2,2};
+        int[][] dp = new int[10][n];
+        dp(dp, n);
+        int result = 0;
+        for(int i = 0; i <= 9; i++){
+            result = (result + dp[i][n-1]) % MOD;
+        }
+
+
+        return result;
+    }
+
+    private void dp(int[][] dp, int n){
+        // n : small -> large
+        // number : small -> large
+        for(int i = 0; i < 10; i++){
+            dp[i][0] = 1;
+        }
+        for(int step = 1; step < n; step++){
+            for(int i = 0; i < 10; i++){
+                switch(i){
+                    case 0 :
+                        dp[0][step] = (dp[4][step-1] + dp[6][step-1]) % MOD;
+                        break;
+                    case 1 :
+                        dp[1][step] = (dp[8][step-1] + dp[6][step-1]) % MOD;
+                        break;
+                    case 2 :
+                        dp[2][step] = (dp[7][step-1] + dp[9][step-1]) % MOD;
+                        break;
+                    case 3 :
+                        dp[3][step] = (dp[8][step-1] + dp[4][step-1]) % MOD;
+                        break;
+                    case 4 :
+                        dp[4][step] = ((dp[0][step-1] + dp[3][step-1]) % MOD + dp[9][step-1]) % MOD;
+                        break;
+                    case 5 :
+                        break;
+                    case 6 :
+                        dp[6][step] = ((dp[0][step-1] + dp[1][step-1]) % MOD + dp[7][step-1]) % MOD;
+                        break;
+                    case 7 :
+                        dp[7][step] = (dp[2][step-1] + dp[6][step-1]) % MOD;
+                        break;
+                    case 8 :
+                        dp[8][step] = (dp[1][step-1] + dp[3][step-1]) % MOD;
+                        break;
+                    case 9 :
+                        dp[9][step] = (dp[2][step-1] + dp[4][step-1]) % MOD;
+                        break;
+                }
+            }
+        }
+    }
+
+}
