@@ -1,0 +1,60 @@
+class Solution {
+    public int largestSubmatrix(int[][] matrix) {
+        int[][] ones = new int[matrix.length][matrix[0].length];
+        int[] rowOne = new int[matrix.length];
+        for(int i = 0; i < matrix.length; i++){
+            int row1 = 0;
+            for(int j = 0; j < matrix[0].length; j++){
+                if(matrix[i][j] == 1){
+                    row1++;
+                }
+                if(ones[i][j] == 0 && matrix[i][j] == 1){
+                    int column1 = countOnes(matrix, i, j);
+                    int k = i;
+                    while(column1 > 0){
+                        ones[k++][j] = column1--;
+                    }
+                }
+            }
+            rowOne[i] = row1;
+        }
+        for(int i = 0; i < matrix.length; i++){
+            Arrays.sort(ones[i]);
+        }
+        int result = 0;
+        for(int i = 0; i < matrix.length; i++){
+            int numsOfOne = rowOne[i];
+            int index = findIndex(ones[i]);
+            while(numsOfOne > 0){
+                result = Math.max(result, ones[i][index] * numsOfOne);
+                index++;
+                numsOfOne--;
+            }
+        }
+        return result;
+    }
+
+    private int countOnes(int[][] matrix, int i, int j){
+        int count = 0, k = i;
+        while(k < matrix.length && matrix[k][j] == 1){
+            count++;
+            k++;
+        }
+        return count;
+    }
+
+    private int findIndex(int[] arr){
+        int L = 0, R = arr.length - 1, M = 0;
+        int index = 0;
+        while(L <= R){
+            M = L + ((R - L) / 2);
+            if(arr[M] != 0){
+                index = M;
+                R = M - 1;
+            }else{
+                L = M + 1;
+            }
+        }
+        return index;
+    }
+}
