@@ -1,0 +1,211 @@
+
+/**
+ * Your FoodRatings object will be instantiated and called as such:
+ * FoodRatings obj = new FoodRatings(foods, cuisines, ratings);
+ * obj.changeRating(food,newRating);
+ * String param_2 = obj.highestRated(cuisine);
+ */
+
+class FoodRatings {
+    // solution with Modify Heap
+    private class Heap{
+        private Food[] foods;
+        private HashMap<Food, Integer> indexMap; 
+        private int size;
+        public Heap(String[] foods){
+            this.foods = new Food[foods.length];
+            indexMap = new HashMap<>();
+            size = 0;
+        }
+        public void add(Food f){
+            foods[size] = f;
+            indexMap.put(f, size);
+            lookUp(size);
+            size++;
+        }
+        public void update(Food f, int newRating){
+            int index = indexMap.get(f);
+            foods[index].rating = newRating;
+            lookUp(index);
+            lookDown(index);
+        }
+        public String getHighest(){
+            return foods[0].food;
+        }
+        private void lookUp(int i){
+            int parent = (i-1) / 2;
+            while(i > 0 && foods[i].rating >= foods[parent].rating){
+                if(foods[i].rating > foods[parent].rating){
+                    swap(i, parent);
+                    i = parent;
+                    parent = (i-1) / 2;
+                }else{
+                    if(foodNameComparator(i, parent) == foods[i]){
+                        swap(i, parent);
+                        i = parent;
+                        parent = (i-1) / 2;
+                    }else{
+                        break;
+                    }
+                }
+            }
+        }
+        private void lookDown(int i){
+            int leftChild = (i * 2) + 1;
+            while(leftChild < size){
+                int rightChild = leftChild + 1;
+                int max = leftChild;
+                if(rightChild < size && foods[rightChild].rating >= foods[leftChild].rating){
+                    if(foods[rightChild].rating == foods[leftChild].rating){
+                        if(foodNameComparator(rightChild, leftChild) == foods[rightChild]){
+                            max = rightChild;
+                        }
+                    }else{
+                        max = rightChild;
+                    }
+                }
+                if(foods[i].rating >= foods[max].rating){
+                    if(foods[i].rating == foods[max].rating){
+                        if(foodNameComparator(i, max) == foods[i]){
+                            max = i;
+                        }
+                    }else{
+                        max = i;
+                    }
+                }
+                if(max == i){
+                    break;
+                }else{
+                    swap(i, max);
+                    leftChild = (max * 2) + 1;
+                    i = max;
+                }
+            }
+        }
+        private Food foodNameComparator(int a, int b){
+            String name1 = foods[a].food, name2 = foods[b].food;
+            int len = Math.min(name1.length(), name2.length());
+            for(int i = 0; i < len; i++){
+                if(name1.charAt(i) - name2.charAt(i) < 0){
+                    return foods[a];
+                }else if(name1.charAt(i) - name2.charAt(i) > 0){
+                    return foods[b];
+                }
+            }
+            if(name1.length() > name2.length()){
+                return foods[b];
+            }
+            return foods[a];
+        }
+        private void swap(int a, int b){
+            indexMap.put(foods[a], b);
+            indexMap.put(foods[b], a);
+            Food food1 = foods[a];
+            foods[a] = foods[b];
+            foods[b] = food1;
+        }
+    }
+    private class Food{
+        public String food;
+        public String cuisine;
+        public int rating;
+        public Food(String f, String c, int r){
+            food = f;
+            cuisine = c;
+            rating = r;
+        }
+    }
+    private class FoodComparator implements Comparator<Food>{
+        public int compare(Food f1, Food f2){
+            int result = f2.rating - f1.rating;
+            if(result == 0){
+                return (f1.food).compareTo(f2.food);
+            }
+            return result;
+        }
+    }
+    private HashMap<String, Food> foodMap; 
+    private HashMap<String, Heap> cuisineMap;
+
+    public FoodRatings(String[] foods, String[] cuisines, int[] ratings) {
+        foodMap = new HashMap<>();
+        cuisineMap= new HashMap<>();
+        for(int i = 0; i < foods.length; i++){
+            Food food = new Food(foods[i], cuisines[i], ratings[i]);
+            foodMap.put(foods[i], food);
+            Heap heap = cuisineMap.getOrDefault(cuisines[i], new Heap(foods));
+            heap.add(food);
+            cuisineMap.put(cuisines[i], heap);
+        }
+    }
+    
+    public void changeRating(String food, int newRating) {
+        Food f = foodMap.get(food);
+        f.rating = newRating;
+        cuisineMap.get(f.cuisine).update(f, newRating);
+    }
+    
+    public String highestRated(String cuisine) {
+        return cuisineMap.get(cuisine).getHighest();
+    }
+}
+
+
+
+// solution with PriorityQueue
+
+//  class FoodRatings {
+//     private class Food{
+//         public String food;
+//         public String cuisine;
+//         public int rating;
+//         public Food(String f, String c, int r){
+//             food = f;
+//             cuisine = c;
+//             rating = r;
+//         }
+//     }
+//     private class FoodComparator implements Comparator<Food>{
+//         public int compare(Food f1, Food f2){
+//             int result = f2.rating - f1.rating;
+//             if(result == 0){
+//                 return (f1.food).compareTo(f2.food);
+//             }
+//             return result;
+//         }
+//     }
+//     private HashMap<String, Food> foodMap; 
+//     private HashMap<String, PriorityQueue<Food>> cuisineMap;
+
+//     public FoodRatings(String[] foods, String[] cuisines, int[] ratings) {
+//         foodMap = new HashMap<>();
+//         cuisineMap= new HashMap<>();
+//         for(int i = 0; i < foods.length; i++){
+//             Food food = new Food(foods[i], cuisines[i], ratings[i]);
+//             foodMap.put(foods[i], food);
+//             PriorityQueue<Food> heap = cuisineMap.getOrDefault(cuisines[i], new PriorityQueue<>(new FoodComparator()));
+//             heap.add(food);
+//             cuisineMap.put(cuisines[i], heap);
+//         }
+//     }
+    
+//     public void changeRating(String food, int newRating) {
+//         Food prev_f = foodMap.get(food);
+//         Food new_f = new Food(food, prev_f.cuisine, newRating);
+//         prev_f.food = "";
+//         foodMap.put(food, new_f);
+//         cuisineMap.get(prev_f.cuisine).add(new_f);
+//         // System.out.print("null ");
+//         // cuisineMap.get(f.cuisine).update(f, newRating);
+//     }
+    
+//     public String highestRated(String cuisine) {
+//         PriorityQueue<Food> heap = cuisineMap.get(cuisine);
+//         while(heap.peek().food.equals("")){
+//             heap.poll();
+//         }
+//         System.out.print(heap.peek().food+" ");
+//         return heap.peek().food;
+//         //return cuisineMap.get(cuisine).getHighest();
+//     }
+// }
