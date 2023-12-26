@@ -1,0 +1,38 @@
+class Solution {
+    public int numRollsToTarget(int n, int k, int target) {
+        int[][] dp = new int[n + 1][target + 1];
+        dpway(dp, k);
+        return dp[n][target];
+    }
+    // private long process(int k, int n, int target){
+    //     if(n == 0){
+    //         if(target == 0){
+    //             return 1;
+    //         }else{
+    //             return 0;
+    //         }
+    //     }
+    //     long result = 0;
+    //     for(int i = 1; i <= k; i++){
+    //         result += process(k, n-1, target - i);
+    //     }
+    //     return result;
+    // }
+    private void dpway(int[][] dp, int k){
+        int MOD = 1000000007;
+        dp[0][0] = 1;
+
+        for(int n = 1; n < dp.length; n++){
+            for(int target = n; target < dp[0].length; target++){
+                long result = 0;
+                for(int i = 1; i <= k; i++){
+                    if(i > target){
+                        break;
+                    }
+                    result += dp[n - 1][target - i];
+                }
+                dp[n][target] = (int)(result % MOD);
+            }
+        }
+    }
+}
