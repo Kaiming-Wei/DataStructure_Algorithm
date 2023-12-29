@@ -1,0 +1,55 @@
+class Solution {
+    public int minDifficulty(int[] jobDifficulty, int d) {
+        if(jobDifficulty.length < d){
+            return -1;
+        }
+        int[][] dp = new int[jobDifficulty.length + 1][d + 1];
+        dpway(dp, jobDifficulty);
+        return dp[0][d];
+    }
+    private int process(int[][] dp, int[] jobs, int i, int d){
+        if(dp[i][d] != -1){
+            return dp[i][d];
+        }
+        if(d > jobs.length - i || (d == 0 && i != jobs.length)){
+            dp[i][d] = Integer.MAX_VALUE / 2;
+            return Integer.MAX_VALUE / 2;
+        }
+        if(i == jobs.length && d == 0){
+            dp[i][d] = 0;
+            return 0;
+        }
+        int max = jobs[i];
+        int result = Integer.MAX_VALUE;
+        for(int done = i; done < jobs.length; done++){
+            max = Math.max(jobs[done], max);
+            result = Math.min(result, max + process(dp, jobs, done + 1, d - 1));
+        }
+        dp[i][d] = result;
+        return result;
+    }
+    private void dpway(int[][] dp, int[] jobs){
+        // i : large -> small
+        // d : small -> large
+
+        for(int i = dp.length - 1; i >= 0; i--){
+            for(int d = 0; d < dp[0].length; d++){
+                if(d > jobs.length - i || (d == 0 && i != jobs.length)){
+                    dp[i][d] = Integer.MAX_VALUE / 2;
+                }else if(i == jobs.length && d == 0){
+                    dp[i][d] = 0;
+                }else{
+                    int max = jobs[i];
+                    int result = Integer.MAX_VALUE;
+                    for(int done = i; done < jobs.length; done++){
+                        max = Math.max(jobs[done], max);
+                        result = Math.min(result, max + dp[done + 1][d - 1]);
+                        //result = Math.min(result, max + process(jobs, done + 1, d - 1));
+                    }
+                    dp[i][d] = result;
+                }
+            }
+        }
+
+    }
+}
