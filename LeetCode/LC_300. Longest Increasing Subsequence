@@ -1,0 +1,80 @@
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        List<Integer> list = new ArrayList<>();
+        list.add(nums[0]);
+        for(int x : nums){
+            if(x > list.get(list.size() - 1)){
+                list.add(x);
+            }else{
+                binarySearch(list, x);
+            }
+        }
+        return list.size();
+    }
+
+    private void binarySearch(List<Integer> list, int x){
+        int L = 0, R = list.size() - 1, M = 0;
+        int change = -1;
+        while(L <= R){
+            M = L + ((R - L) / 2);
+            int m = list.get(M);
+            if(x <= m){
+                change = M;
+                R = M - 1;
+            }else if(x > m){
+                L = M + 1;
+            }
+        }
+        if(change != -1){
+            list.set(change, x);
+        }
+    }
+}
+
+
+/*
+Recursive and DP : N^2
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int result = 0;
+        int[][] dp = new int[nums.length + 1][nums.length + 1];
+        // for(int i = 0; i < nums.length; i++){
+        //     result = Math.max(result, 1 + process(nums, i + 1, i));
+        // }
+        dpway(nums, dp);
+        for(int i = 0; i < nums.length; i++){
+            result = Math.max(result, 1 + dp[i+1][i]);
+        }
+        return result;
+    }
+    private int process(int[] nums, int i, int prev){
+        if(i == nums.length){
+            return 0;
+        }
+        int yes = 0, no = 0;
+        if(nums[i] > nums[prev]){
+            yes = 1 + process(nums, i + 1, i);
+            no = process(nums, i + 1, prev);
+        }else{
+            no = process(nums, i + 1, prev);
+        }
+        return Math.max(yes, no);
+    }
+    private void dpway(int[] nums, int[][] dp){
+        // i : large -> small
+        // prev : large -> small
+        for(int i = nums.length - 1; i >= 0; i--){
+            for(int prev = nums.length - 1; prev >= 0; prev--){
+                int yes = 0, no = 0;
+                if(nums[i] > nums[prev]){
+                    yes = 1 + dp[i+1][i]; //process(nums, i + 1, i);
+                    no = dp[i+1][prev]; //process(nums, i + 1, prev);
+                }else{
+                    no = dp[i+1][prev]; //process(nums, i + 1, prev);
+                }
+                dp[i][prev] = Math.max(yes, no);
+            }
+        }
+    }
+}
+*/
