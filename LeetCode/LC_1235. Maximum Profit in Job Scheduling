@@ -1,0 +1,121 @@
+class Solution {
+    private class Job{
+        public int start;
+        public int end;
+        public int profit;
+        public Job(int start, int end, int profit){
+            this.start = start;
+            this.end = end;
+            this.profit = profit;
+        }
+    }
+    private class JobComparator implements Comparator<Job>{
+        public int compare(Job o1, Job o2){
+            return o1.start - o2.start;
+        }
+    }
+    public int jobScheduling(int[] startTime, int[] endTime, int[] profit) {
+        Job[] jobs = new Job[startTime.length];
+        for(int i = 0; i < startTime.length; i++){
+            jobs[i] = new Job(startTime[i], endTime[i], profit[i]);
+        }
+        Arrays.sort(jobs, new JobComparator());
+        /* return process(jobs, 0, jobs.length);
+            int[][] dp = new int[jobs.length + 1][jobs.length + 1];
+            dpway(jobs, dp);
+            return dp[0][jobs.length];
+        */
+        // return process(jobs, 0);
+        int[] dp = new int[jobs.length + 1];
+        dpway(jobs, dp);
+        return dp[0];
+    }
+    private int process(Job[] jobs, int i){
+        if(i == jobs.length){
+            return 0;
+        }
+        if(i == jobs.length - 1){
+            return jobs[i].profit;
+        }
+        int next = findNextJob(jobs, i);
+        int include = jobs[i].profit + process(jobs, next);
+        int exclude = process(jobs, i + 1);
+        return Math.max(include, exclude);
+    }
+    private void dpway(Job[] jobs, int[] dp){
+        // i : l -> s
+        for(int i = jobs.length - 1; i >= 0; i--){
+            if(i == jobs.length - 1){
+                dp[i] = jobs[i].profit;
+                continue;
+            }
+            int next = findNextJob(jobs, i);
+            int include = jobs[i].profit + dp[next];
+            int exclude = dp[i+1];
+            dp[i] = Math.max(include, exclude);
+        }
+    }
+    private int findNextJob(Job[] jobs, int i){
+        // for(int next = i + 1; next < jobs.length; next++){
+        //     if(jobs[next].start >= jobs[i].end){
+        //         return next;
+        //     }
+        // }
+        // return jobs.length;
+        int L = i + 1, R = jobs.length - 1, M = -1;
+        int result = jobs.length;
+        while(L <= R){
+            M = L + ((R - L) / 2);
+            if(jobs[M].start >= jobs[i].end){
+                result = M;
+                R = M - 1;
+            }else{
+                L = M + 1;
+            }
+        }
+        return result;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // Recusive & DP with 2 para
+    /*
+    private int process(Job[] jobs, int i, int prev){
+        if(i == jobs.length){
+            return 0;
+        }
+        int yes = 0, no = 0;
+        if(prev == jobs.length || jobs[i].start >= jobs[prev].end){
+            yes = jobs[i].profit + process(jobs, i + 1, i);
+        }
+        no = process(jobs, i + 1, prev);
+        return Math.max(yes, no);
+    }
+    private void dpway(Job[] jobs, int[][] dp){
+        // i : l -> s
+        // end : l -> s
+        for(int i = jobs.length; i >= 0; i--){
+            for(int prev = dp[0].length - 1; prev >= 0; prev--){
+                if(i == jobs.length){
+                    dp[i][prev] = 0;
+                    continue;
+                }
+                int yes = 0, no = 0;
+                if(prev == jobs.length || jobs[i].start >= jobs[prev].end){
+                    yes = jobs[i].profit + dp[i + 1][i]; //process(jobs, i + 1, jobs[i].end);
+                }
+                no = dp[i + 1][prev]; //process(jobs, i + 1, end);
+                dp[i][prev] = Math.max(yes, no);
+            }
+        }
+    }
+    */
+}
