@@ -1,0 +1,74 @@
+class Solution {
+    public int minFallingPathSum(int[][] matrix) {
+        int min = Integer.MAX_VALUE;
+        int n = matrix.length;
+        int[][] dp = new int[n + 1][n];
+        dpway(matrix, dp);
+        for(int i = 0; i < n; i++){
+            min = Math.min(min, dp[0][i]);
+        }
+        return min;
+    }
+    private void dpway(int[][] matrix, int[][] dp){
+
+        for(int row = matrix.length - 1; row >= 0; row--){
+            for(int col = 0; col < matrix.length; col++){
+                int min = matrix[row][col] + dp[row + 1][col]; //process(matrix, row + 1, col);
+                if(checkLeft(matrix, col)){
+                    int left = matrix[row][col] + dp[row + 1][col - 1]; //process(matrix, row + 1, col - 1);
+                    min = Math.min(min, left);
+                }
+                if(checkRight(matrix, col)){
+                    int right = matrix[row][col] + dp[row + 1][col + 1]; //process(matrix, row + 1, col + 1);
+                    min = Math.min(min, right);
+                }
+                dp[row][col] = min;
+            }
+        }
+    }
+    private boolean checkLeft(int[][] matrix, int col){
+        return col - 1 >= 0;
+    }
+    private boolean checkRight(int[][] matrix, int col){
+        return col + 1 < matrix.length;
+    }
+
+
+
+
+
+    // Recursive Solution
+    /*
+    public int minFallingPathSum(int[][] matrix) {
+        int min = Integer.MAX_VALUE;
+        int n = matrix.length;
+        for(int i = 0; i < n; i++){
+            min = Math.min(min, process(matrix, 0, i));
+        }
+        return min;
+    }
+
+    private int process(int[][] matrix, int row, int col){
+        if(row == matrix.length){
+            return 0;
+        }
+        int min = matrix[row][col] + process(matrix, row + 1, col);
+        if(checkLeft(matrix, col)){
+            int left = matrix[row][col] + process(matrix, row + 1, col - 1);
+            min = Math.min(min, left);
+        }
+        if(checkRight(matrix, col)){
+            int right = matrix[row][col] + process(matrix, row + 1, col + 1);
+            min = Math.min(min, right);
+        }
+        return min;
+    }
+
+    private boolean checkLeft(int[][] matrix, int col){
+        return col - 1 >= 0;
+    }
+    private boolean checkRight(int[][] matrix, int col){
+        return col + 1 < matrix.length;
+    }
+    */
+}
