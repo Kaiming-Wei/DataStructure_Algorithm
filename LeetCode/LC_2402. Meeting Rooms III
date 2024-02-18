@@ -1,0 +1,53 @@
+class Solution {
+    private class Room{
+        public int id;
+        public int endTime;
+        public Room(int id, int endTime){
+            this.id = id;
+            this.endTime = endTime;
+        }
+    }
+    private class UsedRoomComparator implements Comparator<Room>{
+        public int compare(Room r1, Room r2){
+            if(r1.endTime == r2.endTime){
+                return r1.id - r2.id;
+            }else{
+                return r1.endTime - r2.endTime;
+            }
+        }
+    }
+    public int mostBooked(int n, int[][] meetings) {
+        Arrays.sort(meetings, (int[] a, int[] b) -> (a[0] - b[0]));
+        PriorityQueue<Room> empty = new PriorityQueue<>((Room r1, Room r2) -> (r1.id - r2.id));
+        PriorityQueue<Room> used = new PriorityQueue<>(new UsedRoomComparator());
+        for(int i = 0; i < n; i++){
+            empty.add(new Room(i, 0));
+        }
+        int[] useFrequency = new int[n];
+        for(int[] meeting : meetings){
+            while(!used.isEmpty() && used.peek().endTime <= meeting[0]){
+                Room rm = used.poll();
+                rm.endTime = 0;
+                empty.add(rm);
+            }
+            if(!empty.isEmpty()){
+                Room rm = empty.poll();
+                useFrequency[rm.id]++;
+                rm.endTime = meeting[1];
+                used.add(rm);
+            }else{
+                Room rm = used.poll();
+                useFrequency[rm.id]++;
+                rm.endTime += (meeting[1] - meeting[0]);
+                used.add(rm);
+            }
+        }
+        int ans = 0;
+        for(int i = 0; i < n; i++){
+            if(useFrequency[i] > useFrequency[ans]){
+                ans = i;
+            }
+        }
+        return ans;
+    }
+}
